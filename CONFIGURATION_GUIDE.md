@@ -105,8 +105,15 @@
 
 #### MACD Trend Protection
 - **說明**：利用 MACD 避免逆勢加倉。
-- **邏輯**：若 MACD 顯示強烈下跌趨勢，暫停做多加倉。
+- **邏輯**：若 MACD 顯示強烈下跌趨勢 (連續 N 根 K 線背離)，暫停做多加倉。
 - **建議**：true (啟用)。
+
+#### MACD Parameters
+- **MACDFastEMA**: 快速 EMA 週期 (預設 12)。
+- **MACDSlowEMA**: 慢速 EMA 週期 (預設 26)。
+- **MACDSignalSMA**: 信號線 SMA 週期 (預設 9)。
+- **MACDDivergenceBars**: 判斷背離的 K 線數量 (預設 3)。
+  - 數值越大，條件越嚴格 (需要更長時間的背離才阻擋)。
 
 ### EMA 過濾器 (EMA Filters)
 

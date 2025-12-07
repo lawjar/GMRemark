@@ -1,10 +1,10 @@
 //+------------------------------------------------------------------+
-//|                                      GMRemake.mq4                |
+//|                                      GMRemake_v1.0.mq4           |
 //|                                       Copyright 2025, Lawjar-EA  |
 //|                       MT4 馬丁格爾交易策略 (Martingale Strategy)  |
 //|                                                                  |
 //+------------------------------------------------------------------+
-#property copyright "Copyright 2025a, GMRemake Martingale EA"
+#property copyright "Copyright 2025, Lawjar-EA"
 #property link      "https://github.com/lawjar/GMRemake"
 #property version   "1.00"
 #property strict
@@ -49,6 +49,10 @@ input double          LotSize8 = 1.28;                          // 第 8 層手�
 // 趨勢保護參數 (Trend Protection Parameters)
 input bool            TrendProtection = true;                   // 啟用價格行為趨勢保護 (K 線顏色確認)
 input bool            MACDTrendProtection = true;               // 啟用 MACD 趨勢保護 (避免逆勢加倉)
+input int             MACDFastEMA = 12;                         // MACD 快速 EMA 週期
+input int             MACDSlowEMA = 26;                         // MACD 慢速 EMA 週期
+input int             MACDSignalSMA = 9;                        // MACD 信號 SMA 週期
+input int             MACDDivergenceBars = 3;                   // MACD 背離判斷 K 線數量
 
 // EMA 趨勢過濾參數 (EMA Trend Filter Parameters)
 enum ENUM_EMA_FILTER_MODE
@@ -297,17 +301,18 @@ void CheckBuyEntry(int orderLevel)
             canEnter = true;
             Print("Debug Buy Level ", orderLevel, ": 距離達成. 虧損: ", currentLoss, " 需求: ", requiredDistance);
             
-            // 趨勢保護：檢查前一根 K 線是否收陽 (Bullish)
+            // 趨勢保護：檢查前一根 K 線是否收陽 (Bullish) 且突破前前一根高點
             if(TrendProtection && orderLevel >= 2)
             {
                double prevClose = iClose(Symbol(), Timeframe, 1);
                double prevOpen = iOpen(Symbol(), Timeframe, 1);
+               double prevPrevHigh = iHigh(Symbol(), Timeframe, 2);
                
-               // 如果前一根不是陽線 (Close <= Open)，不進場
-               if(prevClose <= prevOpen)
+               // 如果前一根不是陽線 (Close <= Open) 或 收盤價未高於前前一根最高價，不進場
+               if(prevClose <= prevOpen || prevClose <= prevPrevHigh)
                {
                   canEnter = false;
-                  Print("Debug Buy Level ", orderLevel, ": 被 K 線顏色保護阻擋. Close: ", prevClose, " <= Open: ", prevOpen);
+                  Print("Debug Buy Level ", orderLevel, ": 被趨勢保護阻擋. Close[1]: ", prevClose, " <= Open[1] or <= High[2]: ", prevPrevHigh);
                }
             }
          }
@@ -398,17 +403,18 @@ void CheckSellEntry(int orderLevel)
             canEnter = true;
             Print("Debug Sell Level ", orderLevel, ": 距離達成. 虧損: ", currentLoss, " 需求: ", requiredDistance);
             
-            // 趨勢保護：檢查前一根 K 線是否收陰 (Bearish)
+            // 趨勢保護：檢查前一根 K 線是否收陰 (Bearish) 且跌破前前一根低點
             if(TrendProtection && orderLevel >= 2)
             {
                double prevClose = iClose(Symbol(), Timeframe, 1);
                double prevOpen = iOpen(Symbol(), Timeframe, 1);
+               double prevPrevLow = iLow(Symbol(), Timeframe, 2);
                
-               // 如果前一根不是陰線 (Close >= Open)，不進場
-               if(prevClose >= prevOpen)
+               // 如果前一根不是陰線 (Close >= Open) 或 收盤價未低於前前一根最低價，不進場
+               if(prevClose >= prevOpen || prevClose >= prevPrevLow)
                {
                   canEnter = false;
-                  Print("Debug Sell Level ", orderLevel, ": 被 K 線顏色保護阻擋. Close: ", prevClose, " >= Open: ", prevOpen);
+                  Print("Debug Sell Level ", orderLevel, ": 被趨勢保護阻擋. Close[1]: ", prevClose, " >= Open[1] or >= Low[2]: ", prevPrevLow);
                }
             }
          }
@@ -454,32 +460,43 @@ void CheckSellEntry(int orderLevel)
 
 //+------------------------------------------------------------------+
 //| 檢查 MACD 趨勢 (Check MACD Trend)                                 |
-//| 若 MACD 未顯示連續 3 根背離，返回 true                             |
+//| 若 MACD 未顯示連續 N 根背離，返回 true                             |
 //+------------------------------------------------------------------+
 bool CheckMACDTrend(bool isBuy)
 {
-   // MACD 參數: 12, 26, 9
-   double macd1 = iMACD(Symbol(), Timeframe, 12, 26, 9, PRICE_CLOSE, MODE_MAIN, 1);
-   double macd2 = iMACD(Symbol(), Timeframe, 12, 26, 9, PRICE_CLOSE, MODE_MAIN, 2);
-   double macd3 = iMACD(Symbol(), Timeframe, 12, 26, 9, PRICE_CLOSE, MODE_MAIN, 3);
-   
-   if(isBuy)
+   if (MACDDivergenceBars < 2) return true; // 至少需要比較 2 根 K 線
+
+   bool isDivergent = true;
+
+   for (int i = 1; i < MACDDivergenceBars; i++)
    {
-      // 檢查是否為多頭趨勢 (MACD 上升中)
-      // 如果連續 3 根下跌 (macd1 < macd2 < macd3)，視為逆勢，不宜做多
-      if(macd1 < macd2 && macd2 < macd3)
+      double currentMACD = iMACD(Symbol(), Timeframe, MACDFastEMA, MACDSlowEMA, MACDSignalSMA, PRICE_CLOSE, MODE_MAIN, i);
+      double prevMACD = iMACD(Symbol(), Timeframe, MACDFastEMA, MACDSlowEMA, MACDSignalSMA, PRICE_CLOSE, MODE_MAIN, i + 1);
+
+      if (isBuy)
       {
-         return false;
+         // 做多時，若 MACD 持續下跌 (Current < Prev)，則視為背離/逆勢
+         if (currentMACD >= prevMACD)
+         {
+            isDivergent = false;
+            break;
+         }
+      }
+      else
+      {
+         // 做空時，若 MACD 持續上升 (Current > Prev)，則視為背離/逆勢
+         if (currentMACD <= prevMACD)
+         {
+            isDivergent = false;
+            break;
+         }
       }
    }
-   else
+   
+   // 如果確認為背離 (isDivergent 為 true)，則返回 false (不允許交易)
+   if (isDivergent)
    {
-      // 檢查是否為空頭趨勢 (MACD 下降中)
-      // 如果連續 3 根上升 (macd1 > macd2 > macd3)，視為逆勢，不宜做空
-      if(macd1 > macd2 && macd2 > macd3)
-      {
-         return false;
-      }
+      return false;
    }
    
    return true;
