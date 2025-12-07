@@ -1,5 +1,5 @@
 //+------------------------------------------------------------------+
-//|                                      GMRemake_v1.0.mq4           |
+//|                                               GMRemake_v1.0.mq4  |
 //|                                       Copyright 2025, Lawjar-EA  |
 //|                       MT4 馬丁格爾交易策略 (Martingale Strategy)  |
 //|                                                                  |
