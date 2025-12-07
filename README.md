@@ -1,8 +1,8 @@
-# GMRemark
+# GMRemake
 A Martingale Trading strategies for MT4 and MT5 EA, Original idea from AlgoX GM.
 
 ## Overview
-GMRemark is a sophisticated Martingale Expert Advisor designed for MetaTrader 4 (MT4) platform. The EA implements an advanced martingale strategy with multiple layers of risk management, trend protection, and EMA filters to optimize trading performance.
+GMRemake is a sophisticated Martingale Expert Advisor designed for MetaTrader 4 (MT4) platform. The EA implements an advanced martingale strategy with multiple layers of risk management, trend protection, and EMA filters to optimize trading performance.
 
 ## Features
 
@@ -29,7 +29,7 @@ GMRemark is a sophisticated Martingale Expert Advisor designed for MetaTrader 4 
 ## Installation
 
 ### For MT4:
-1. Download the `GMRemark_Martingale_EA.mq4` file from the `MT4/Experts` folder
+1. Download the `GMRemake_Martingale_EA.mq4` file from the `MT4/Experts` folder
 2. Copy the file to your MT4 installation directory:
    - Windows: `C:\Program Files\MetaTrader 4\MQL4\Experts\`
    - Or through MT4: File → Open Data Folder → MQL4 → Experts
