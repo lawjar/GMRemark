@@ -5,6 +5,8 @@
 ## 專案概覽
 GMRemake 是一個進階的馬丁格爾 Expert Advisor (EA)。它實作了多層次的風險管理、趨勢保護以及 EMA 過濾器，旨在優化交易表現並降低傳統馬丁策略的風險。
 
+![GMRemake EA](images/readme.jpg)
+
 ## 核心功能
 
 ### 1. 馬丁格爾策略 (Martingale Strategy)
