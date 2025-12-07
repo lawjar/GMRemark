@@ -1,6 +1,6 @@
 ﻿# GMRemake Martingale EA
 
-這是一個為 MetaTrader 4 (MT4) 平台設計的馬丁格爾 (Martingale) 交易策略 EA，原始概念源自 AlgoX GM。
+這是一個為 MetaTrader 4 (MT4) 平台設計的馬丁格爾 (Martingale) 交易策略 EA。
 
 ## 專案概覽
 GMRemake 是一個進階的馬丁格爾 Expert Advisor (EA)。它實作了多層次的風險管理、趨勢保護以及 EMA 過濾器，旨在優化交易表現並降低傳統馬丁策略的風險。
