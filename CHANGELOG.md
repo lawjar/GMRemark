@@ -1,157 +1,100 @@
-# Changelog
+# 更新日誌 (Changelog)
 
-All notable changes to the GMRemake Martingale EA project will be documented in this file.
+本檔案記錄 GMRemake Martingale EA 專案的所有重大變更。
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+格式基於 [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)，
+本專案遵循 [語意化版本控制 (Semantic Versioning)](https://semver.org/spec/v2.0.0.html)。
 
 ## [1.0.0] - 2024-12-07
 
-### Added
-- Initial release of GMRemake Martingale EA for MT4
-- Complete martingale strategy with up to 8 levels
-- Configurable entry distances for each martingale level
-- Independent lot size configuration for each level
-- Trend protection based on price action confirmation
-- MACD trend protection to avoid entries during strong adverse trends
-- Dual EMA trend filter system (long and short periods)
-- Trailing stop functionality with configurable activation and distance
-- Spread filter to prevent trading during unfavorable conditions
-- Slippage control for order execution
-- Support for both buy and sell directions
-- Ability to disable buy or sell trading independently
-- Magic number system for order identification
-- Comprehensive documentation including:
-  - Main README with feature overview
-  - Configuration guide with multiple setup examples
-  - Risk warnings and usage tips
-  - Installation instructions
-- MIT License
+### 新增 (Added)
+- GMRemake Martingale EA for MT4 初始版本發布
+- 完整的馬丁格爾策略，支援最多 8 層加倉
+- 可為每一層馬丁格爾設定獨立的入場距離
+- 可為每一層設定獨立的手數
+- 基於價格行為確認的趨勢保護功能
+- MACD 趨勢保護，避免在強烈逆勢中進場
+- 雙 EMA 趨勢過濾系統 (長週期與短週期)
+- 移動止損功能，具備可設定的啟動門檻與距離
+- 點差過濾器，避免在點差過大時交易
+- 訂單執行的滑點控制
+- 支援雙向 (買入與賣出) 交易
+- 可獨立停用買入或賣出交易
+- 魔術編號系統，用於識別訂單
+- 完整的文件，包含：
+  - 主 README (功能概覽)
+  - 設定指南 (包含多種設定範例)
+  - 風險警告與使用提示
+  - 安裝說明
+- MIT 授權
 
-### Features in Detail
+### 功能詳情 (Features in Detail)
 
-#### Core Martingale System
-- Maximum 8 martingale levels per direction
-- Configurable entry distances: 100, 150, 200, 250, 300, 350, 400, 450 points (default)
-- Configurable lot sizes: 0.01, 0.02, 0.04, 0.08, 0.16, 0.32, 0.64, 1.28 (default doubling)
-- Independent buy/sell order control
+#### 核心馬丁格爾系統 (Core Martingale System)
+- 每個方向最多 8 層馬丁格爾加倉
+- 可設定入場距離：100, 150, 200, 250, 300, 350, 400, 450 點 (預設)
+- 可設定手數：0.01, 0.02, 0.04, 0.08, 0.16, 0.32, 0.64, 1.28 (預設倍增)
+- 獨立的買單/賣單控制
 
-#### Risk Management
-- Trailing stop with customizable activation threshold (default: 100 points)
-- Trailing stop distance (default: 50 points)
-- Maximum spread filter (default: 30 points)
-- Slippage protection (default: 30 points)
+#### 風險管理 (Risk Management)
+- 移動止損，具備自訂啟動門檻 (預設：100 點)
+- 移動止損距離 (預設：50 點)
+- 最大點差過濾 (預設：30 點)
+- 滑點保護 (預設：30 點)
 
-#### Trend Protection
-- Price-based trend protection (requires candle confirmation)
-- MACD trend protection (blocks entry on 3 consecutive divergent bars)
-- Long EMA filter (default period: 200)
-- Short EMA filter (default period: 50)
-- Configurable EMA offset thresholds for buy/sell
+#### 趨勢保護 (Trend Protection)
+- 基於價格的趨勢保護 (需要 K 線確認)
+- MACD 趨勢保護 (連續 3 根 K 線背離時阻止進場)
+- 長週期 EMA 過濾器 (預設週期：200)
+- 短週期 EMA 過濾器 (預設週期：50)
+- 可設定買入/賣出的 EMA 偏移門檻
 
-#### Technical Implementation
-- Proper order counting and tracking
-- Last price tracking for martingale level calculation
-- Highest/lowest bar detection over configurable period (default: 20 bars)
-- Separate buy and sell logic with independent filters
-- Comprehensive error handling and logging
+#### 技術實作 (Technical Implementation)
+- 正確的訂單計數與追蹤
+- 用於計算馬丁格爾層數的最後價格追蹤
+- 在可設定週期內偵測最高/最低點 (預設：20 根 K 線)
+- 獨立的買入與賣出邏輯，具備獨立過濾器
+- 綜合錯誤處理與日誌記錄
 
-### Configuration Options
-- Timeframe: Any MT4 timeframe (default: H1)
-- Bars Counted: 1-1000 (default: 20)
-- Max Buy/Sell Orders: 0-8 (default: 8)
-- Entry Distances: 1-10000 points per level
-- Lot Sizes: 0.01-100 lots per level
-- EMA Periods: 1-500 (defaults: 200 and 50)
-- Trailing Points: 0-1000 (default: 100)
-- Stop Trailing Points: 0-1000 (default: 50)
-- Spread/Slippage: 0-100 points (default: 30)
+### 設定選項 (Configuration Options)
+- 時間週期：任何 MT4 時間週期 (預設：H1)
+- 回溯 K 線數：1-1000 (預設：20)
+- 最大買/賣單數：0-8 (預設：8)
+- 入場距離：每層 1-10000 點
+- 手數：每層 0.01-100 手
+- EMA 週期：1-500 (預設：200 與 50)
+- 移動止損啟動點：0-1000 (預設：100)
+- 移動止損距離：0-1000 (預設：50)
+- 點差/滑點：0-100 點 (預設：30)
 
-### Documentation
-- Comprehensive README with installation guide
-- Detailed configuration guide with 3 preset strategies:
-  - Conservative setup (3-4 levels, tight risk)
-  - Balanced setup (5-6 levels, moderate risk)
-  - Aggressive setup (8 levels, high risk)
-- Parameter explanation and optimization tips
-- Risk management guidelines
-- Backtesting and forward testing recommendations
-- Currency pair recommendations
-- Emergency procedures
+### 文件 (Documentation)
+- 包含安裝指南的綜合 README
+- 詳細設定指南，包含 3 種預設策略：
+  - 保守型設定 (3-4 層，低風險)
+  - 平衡型設定 (5-6 層，中等風險)
+  - 進攻型設定 (8 層，高風險)
+- 參數解釋與優化提示
+- 風險管理指引
+- 回測與前測建議
+- 貨幣對建議
+- 緊急程序
 
-### Known Limitations
-- Requires manual monitoring during high-impact news events
-- Performance depends heavily on broker spread and execution
-- High drawdown potential with aggressive settings
-- Requires adequate account balance for maximum martingale levels
+### 已知限制 (Known Limitations)
+- 在重大新聞事件期間需要人工監控
+- 績效高度依賴經紀商的點差與執行速度
+- 使用進攻型設定時有高回撤風險
+- 需要足夠的帳戶餘額以承受最大馬丁格爾層數
 
-### Tested On
+### 測試環境 (Tested On)
 - MetaTrader 4 Build 1090+
-- Windows platform
+- Windows 平台
 
-### Future Considerations
-- MT5 version
-- Additional technical indicators for entry signals
-- Time-based trading filters
-- Maximum drawdown protection
-- Break-even functionality
-- Multi-currency support
-- News filter integration
-- Enhanced logging and reporting
-
----
-
-## Release Notes
-
-### Version 1.0.0 - Initial Release
-
-This is the first public release of the GMRemake Martingale EA. The EA has been developed based on the original AlgoX GM concept and includes comprehensive risk management features.
-
-**What's Working:**
-- All core martingale functionality
-- Entry signal generation based on bar extremes
-- Martingale level tracking and execution
-- Trend protection filters (price and MACD)
-- EMA trend filters
-- Trailing stop management
-- Order counting and tracking
-
-**Recommended Use:**
-- Start with demo account
-- Use conservative settings initially
-- Test on major currency pairs with low spreads
-- Ensure adequate account balance (minimum 10x maximum position size)
-
-**Support:**
-For questions, issues, or feature requests, please open an issue on GitHub.
-
----
-
-## Upgrade Instructions
-
-### From: None (Initial Release)
-### To: 1.0.0
-
-This is the initial release. Simply follow the installation instructions in README.md.
-
----
-
-## Security
-
-### Reporting Security Issues
-
-If you discover a security vulnerability in this EA, please send an email to the repository maintainers. Please do not create public GitHub issues for security vulnerabilities.
-
----
-
-## Credits
-
-- **Original Concept**: AlgoX GM
-- **Development**: GMRemake Team
-- **Contributors**: See GitHub contributors list
-
----
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
+### 未來規劃 (Future Considerations)
+- MT5 版本
+- 額外的進場訊號技術指標
+- 基於時間的交易過濾器
+- 最大回撤保護
+- 損益兩平 (Break-even) 功能
+- 多貨幣支援
+- 新聞過濾器整合
+- 增強的日誌與報告功能

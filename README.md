@@ -1,137 +1,95 @@
-# GMRemake
-A Martingale Trading strategies for MT4 and MT5 EA, Original idea from AlgoX GM.
+﻿# GMRemake Martingale EA
 
-## Overview
-GMRemake is a sophisticated Martingale Expert Advisor designed for MetaTrader 4 (MT4) platform. The EA implements an advanced martingale strategy with multiple layers of risk management, trend protection, and EMA filters to optimize trading performance.
+這是一個為 MetaTrader 4 (MT4) 平台設計的馬丁格爾 (Martingale) 交易策略 EA，原始概念源自 AlgoX GM。
 
-## Features
+## 專案概覽
+GMRemake 是一個進階的馬丁格爾 Expert Advisor (EA)。它實作了多層次的風險管理、趨勢保護以及 EMA 過濾器，旨在優化交易表現並降低傳統馬丁策略的風險。
 
-### Core Martingale Strategy
-- **Up to 8 Levels**: Supports up to 8 martingale levels for both buy and sell positions
-- **Configurable Entry Distances**: Each level has its own configurable entry distance
-- **Customizable Lot Sizes**: Independent lot size control for each martingale level
-- **Directional Control**: Can be configured for buy-only, sell-only, or both directions
+## 核心功能
 
-### Risk Management
-- **Trailing Stop**: Automatically trails stop loss when profit reaches specified threshold
-- **Spread Filter**: Prevents trading during high spread conditions
-- **Slippage Control**: Limits order execution slippage
+### 1. 馬丁格爾策略 (Martingale Strategy)
+- **多達 8 層加倉**：支援買入和賣出方向各最多 8 層的馬丁加倉。
+- **可配置的入場距離**：每一層加倉都可以設定獨立的點數距離 (Entry Distance)。
+- **自定義手數 (Lot Size)**：每一層加倉都可以設定獨立的手數，不一定要依照倍數，可以靈活調整。
+- **方向控制**：可以設定只做多 (Buy Only)、只做空 (Sell Only) 或雙向交易。
 
-### Trend Protection
-- **Price Trend Protection**: Ensures new martingale levels only open when price confirms trend reversal
-- **MACD Trend Protection**: Monitors MACD indicator to avoid opening positions during strong adverse trends
-- **EMA Filters**: Dual EMA filter system (long and short periods) to align trades with market trends
+### 2. 風險管理 (Risk Management)
+- **移動止損 (Trailing Stop)**：當整體倉位獲利達到指定點數後，啟動移動止損，鎖定利潤。
+- **點差過濾 (Spread Filter)**：在高點差時暫停交易，避免過高的交易成本。
+- **滑點控制 (Slippage Control)**：限制訂單執行的最大滑點。
+- **最大層數止損**：當達到最大加倉層數後，若價格繼續逆勢達到下一層的距離，將執行強制止損，防止帳戶爆倉。
 
-### Technical Indicators
-- **EMA (Exponential Moving Average)**: Configurable long and short period EMAs for trend filtering
-- **MACD (Moving Average Convergence Divergence)**: Used for trend protection and divergence detection
+### 3. 趨勢保護 (Trend Protection)
+- **價格趨勢確認**：在加倉前，要求價格K線必須出現反轉訊號 (例如：做多加倉前，前一根K線必須是陽線)。
+- **MACD 趨勢保護**：監控 MACD 指標，避免在強烈的逆勢趨勢中加倉 (例如：MACD 連續 3 根柱狀圖顯示強烈下跌時，暫停做多加倉)。
+- **EMA 過濾器**：雙 EMA (長週期與短週期) 過濾系統，確保交易方向與市場大趨勢一致。
 
-## Installation
+## 詳細策略說明
 
-### For MT4:
-1. Download the `GMRemake_Martingale_EA.mq4` file from the `MT4/Experts` folder
-2. Copy the file to your MT4 installation directory:
-   - Windows: `C:\Program Files\MetaTrader 4\MQL4\Experts\`
-   - Or through MT4: File → Open Data Folder → MQL4 → Experts
-3. Restart MT4 or click "Refresh" in the Navigator panel
-4. Drag and drop the EA onto your desired chart
-5. Enable "Auto Trading" in MT4
+### 參數說明 (Parameters)
 
-## Configuration Parameters
+#### 基礎設定
+- **Timeframe**: 交易時區 (預設: H1，即一小時圖)。
+- **Bars Counted Back**: 判斷首單入場訊號時，回溯參考的 K 線數量 (預設: 20)。
+- **Max Buy Order**: 最大買入層數 (0-8，設為 0 則不開買單)。
+- **Max Sell Order**: 最大賣出層數 (0-8，設為 0 則不開賣單)。
 
-### Basic Settings
-- **Timeframe**: Trading timeframe (default: H1)
-- **Bars Counted Back**: Number of bars to analyze for entry signal (default: 20)
-- **Max Buy Order**: Maximum number of buy martingale levels (0-8, 0 disables buy orders)
-- **Max Sell Order**: Maximum number of sell martingale levels (0-8, 0 disables sell orders)
+#### 入場距離 (Entry Distance)
+設定每一層加倉所需的逆勢點數距離：
+- **Entry Distance 1**: 首單入場的觸發距離 (突破高點/低點多少點)。
+- **Entry Distance 2-8**: 第 2 到第 8 層加倉，距離上一張單的點數。
+- *單位為 Points (小點)，例如 100 Points = 10 Pips (大點)。*
 
-### Entry Distance Parameters (in points)
-Configure the distance in points for each martingale level:
-- **Entry Distance 1-8**: Distance required to trigger each successive martingale level
-- Default progression: 100, 150, 200, 250, 300, 350, 400, 450 points
+#### 手數設定 (Lot Size)
+設定每一層的手數大小：
+- **Lot Size 1-8**: 第 1 到第 8 層的下單手數。
+- *建議：新手可使用 0.01, 0.02, 0.04... 的倍增方式，或更保守的 0.01, 0.01, 0.02...*
 
-### Lot Size Parameters
-Configure the lot size for each martingale level:
-- **Lot Size 1-8**: Lot size for each martingale level
-- Default progression: 0.01, 0.02, 0.04, 0.08, 0.16, 0.32, 0.64, 1.28 (doubling strategy)
+#### EMA 過濾機制 (EMA Filters)
+利用兩條指數移動平均線 (EMA) 來過濾進場訊號：
+- **EMA Trend Period (L)**: 長週期 EMA (預設 200)。
+- **EMA Trend Filter (L) For Buy/Sell**: 設定價格必須在 EMA 之上或之下多少點才允許交易。
+- **EMA Trend Period (S)**: 短週期 EMA (預設 50)。
+- *功能：例如設定 "只在價格高於 200 EMA 時做多"，可以避免在空頭趨勢中逆勢做多。*
 
-### Trend Protection
-- **Trend Protection**: Requires price confirmation before opening additional martingale levels (default: true)
-- **MACD Trend Protection**: Prevents opening positions when MACD shows 3 consecutive divergent bars (default: true)
+### 入市策略 (Entry Strategy)
 
-### EMA Trend Filters
-- **EMA Trend Period (L)**: Long EMA period (default: 200)
-- **EMA Trend Filter (L) For Buy**: Long EMA threshold for buy orders (0 = disabled, +/- points)
-- **EMA Trend Filter (L) For Sell**: Long EMA threshold for sell orders (0 = disabled, +/- points)
-- **EMA Trend Period (S)**: Short EMA period (default: 50)
-- **EMA Trend Filter (S) For Buy**: Short EMA threshold for buy orders (0 = disabled, +/- points)
-- **EMA Trend Filter (S) For Sell**: Short EMA threshold for sell orders (0 = disabled, +/- points)
+#### 首單入場 (Level 1)
+- **買入訊號 (Buy)**：當前價格 **高於** 過去 N 根 K 線的最高點 + Entry Distance 1。
+- **賣出訊號 (Sell)**：當前價格 **低於** 過去 N 根 K 線的最低點 - Entry Distance 1。
+- *這是一種「突破策略」，意在捕捉趨勢發動的瞬間。*
 
-### Trailing Stop
-- **Trailing Points**: Profit threshold to activate trailing stop (default: 100 points)
-- **Stop Trailing Points**: Distance to trail stop loss behind current price (default: 50 points)
+#### 馬丁加倉 (Level 2-8)
+- **買入加倉**：當價格比上一張買單 **下跌** 了指定的 Entry Distance (例如 200 點)。
+- **賣出加倉**：當價格比上一張賣單 **上漲** 了指定的 Entry Distance。
+- **保護機制**：加倉前會檢查 Trend Protection (K線反轉) 和 MACD Protection，若條件不符則暫緩加倉，等待更安全的時機，避免"接刀"。
 
-### General Settings
-- **Slippage in Points**: Maximum allowed slippage (default: 30 points)
-- **Spread in Points**: Maximum allowed spread (default: 30 points)
-- **Magic Number**: Unique identifier for EA orders (default: 20241207)
-- **Comment**: Custom comment for orders (default: "GMRemake_Martingale")
+### 平倉機制 (Exit Strategy)
 
-## Strategy Explanation
+#### 移動止損 (Trailing Stop) - 獲利出場
+- **Trailing Points (啟動點)**：當整體倉位 (Basket) 的浮動盈虧達到此點數 (例如 100 點) 時，啟動移動止損。
+- **Stop Trailing Points (回撤點)**：啟動後，若利潤回吐超過此點數 (例如 50 點)，立即全數平倉出場。
+- *這能確保在趨勢延續時賺取更多利潤，而在趨勢反轉時保住大部分獲利。*
 
-### Entry Logic
+#### 強制止損 (Stop Loss) - 認賠出場
+- 當持倉層數達到設定的上限 (例如 Max Buy Order = 5)。
+- 且價格繼續逆勢運行，達到了原本應該開第 6 層的距離。
+- 此時 EA 會判定趨勢錯誤，強制平掉所有倉位，避免虧損無限擴大。
 
-#### First Level Entry (Level 1)
-- **Buy Signal**: Price exceeds the highest high of the last N bars by Entry Distance 1
-- **Sell Signal**: Price falls below the lowest low of the last N bars by Entry Distance 1
+## 安裝說明
 
-#### Martingale Levels (Level 2-8)
-- **Buy Orders**: Opens when price falls below last buy order by the specified Entry Distance
-- **Sell Orders**: Opens when price rises above last sell order by the specified Entry Distance
-- **Trend Protection**: Optionally requires price to show reversal signs before opening
-- **MACD Protection**: Optionally blocks entries during strong adverse MACD trends
+1. 下載 `MT4/Experts/GMRemake_Martingale_EA.mq4` 檔案。
+2. 開啟 MT4 平台，點擊「文件」→「打開數據文件夾」。
+3. 進入 `MQL4` → `Experts` 資料夾，將檔案貼上。
+4. 回到 MT4，在「導航器」面板右鍵點擊「刷新」。
+5. 將 `GMRemake_Martingale_EA` 拖曳到圖表上即可使用。
 
-### Exit Logic
-- **Trailing Stop**: Activates when profit exceeds Trailing Points threshold
-- **Stop Loss Trail**: Follows price at Stop Trailing Points distance
-- **All Positions**: Closes when trailing stop is hit
+## 風險警告
 
-## Risk Warning
+外匯保證金交易具有高風險，可能不適合所有投資者。使用馬丁格爾策略 (Martingale) 雖然有機會快速獲利，但也伴隨著較大的回撤風險。
+- **請務必先在模擬帳戶 (Demo Account) 進行充分測試。**
+- **請確保您的帳戶資金足以承受連續加倉的保證金需求。**
+- **建議從小手數 (0.01) 開始。**
 
-⚠️ **IMPORTANT RISK DISCLOSURE** ⚠️
-
-Martingale strategies involve significant risk:
-- **High Drawdown Potential**: Multiple losing levels can quickly deplete account balance
-- **No Guaranteed Profit**: Past performance does not guarantee future results
-- **Requires Adequate Margin**: Ensure sufficient account balance for maximum martingale levels
-- **Test Thoroughly**: Always test on demo account before live trading
-
-**Recommended:**
-- Start with minimal lot sizes
-- Use on currency pairs with low spreads
-- Ensure adequate account balance (recommended: 10x maximum position size)
-- Monitor open positions regularly
-- Consider maximum drawdown limits
-
-## Usage Tips
-
-1. **Backtesting**: Always backtest the EA with your desired settings before live trading
-2. **Demo Testing**: Run on demo account for at least 1 month before going live
-3. **Conservative Settings**: Start with lower lot sizes and fewer martingale levels
-4. **Monitor Spread**: Ensure your broker offers competitive spreads
-5. **VPS Recommended**: Use a VPS for 24/7 operation and reduced latency
-
-## Support
-
-For issues, questions, or contributions, please:
-- Open an issue on GitHub
-- Submit a pull request for improvements
-- Share your configuration settings and results
-
-## License
-
-This project is open source. Please check the LICENSE file for details.
-
-## Disclaimer
-
-This EA is provided for educational purposes. Trading forex involves substantial risk of loss and is not suitable for all investors. The developers assume no responsibility for any trading losses incurred through the use of this EA.
+---
+Copyright (c) 2025 GMRemake Martingale EA
