@@ -49,9 +49,9 @@ input double          LotSize8 = 1.28;                          // 第 8 層手�
 // 趨勢保護參數 (Trend Protection Parameters)
 input bool            TrendProtection = true;                   // 啟用價格行為趨勢保護 (K 線顏色確認)
 input bool            MACDTrendProtection = true;               // 啟用 MACD 趨勢保護 (避免逆勢加倉)
-input int             MACDFastEMA = 12;                         // MACD 快速 EMA 週期
-input int             MACDSlowEMA = 26;                         // MACD 慢速 EMA 週期
-input int             MACDSignalSMA = 9;                        // MACD 信號 SMA 週期
+input int             MACDFastEMA = 5;                         // MACD 快速 EMA 週期
+input int             MACDSlowEMA = 13;                         // MACD 慢速 EMA 週期
+input int             MACDSignalSMA = 8;                        // MACD 信號 SMA 週期
 input int             MACDDivergenceBars = 3;                   // MACD 背離判斷 K 線數量
 
 // EMA 趨勢過濾參數 (EMA Trend Filter Parameters)
